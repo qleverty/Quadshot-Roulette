@@ -87,6 +87,77 @@ ITEM_NAMES = {
     "📟": "Пульт"
 }
 
+def format_guide_rules() -> str:
+    return """<b>📖 Правила</b>
+
+Игра состоит из 3 раундов. Задача — выжить.
+
+В начале раунда дробовик заряжается несколькими патронами: боевыми (🛑) и холостыми (⚪). Их количество и соотношение случайны.
+
+В свой ход вы стреляете в себя или в противника:
+- Холостой в себя — ход остаётся за вами
+- Боевой в себя — теряете HP и передаёте ход
+- Боевой в противника — противник теряет HP
+
+Когда патронник опустеет, происходит перезарядка. Вместе с ней игроки получают новые предметы.
+
+Раунд завершается, когда остаётся один выживший. После этого начинается следующий раунд — все воскрешают, предметы очищаются.
+
+Победитель игры определяется по итогам всех трёх раундов."""
+
+def format_guide_items() -> str:
+    return """<b>🎁 Предметы</b>
+
+Предметы используются в свой ход перед выстрелом. У каждого игрока может быть до 8 предметов одновременно.
+
+🪚 <b>Пила</b> — укорачивает ствол. Следующий выстрел наносит удвоенный урон
+
+🔍 <b>Лупа</b> — показывает, какой патрон сейчас в стволе (боевой или холостой)
+
+🚬 <b>Сигареты</b> — восстанавливают 1 единицу здоровья
+
+🔗 <b>Наручники</b> — сковывают противника, заставляя его пропустить следующий его ход
+
+🍺 <b>Пиво</b> — перезаряжает дробовик, выбрасывая текущий патрон из патронника
+
+💉 <b>Адреналин</b> — позволяет использовать любой предмет из инвентаря противника
+
+🧲 <b>Инвертор</b> — меняет тип текущего патрона на противоположный (боевой ⇆ холостой)
+
+💊 <b>Просроченное лекарство</b> — 50/50 шанс восстановить 2 HP, либо потерять 1 HP
+
+📞 <b>Телефон</b> — показывает случайный патрон из всего патронника (не только текущий)
+
+📟 <b>Пульт</b> — меняет порядок ходов на противоположный (работает только в играх с 3+ игроками)"""
+
+def format_guide_settings() -> str:
+    return """<b>⚙️ Настройки</b>
+
+Команда /settings открывает меню настроек. Настройки уникальны для каждого из трёх раундов и сохраняются в базе данных между играми.
+
+Вы можете задать диапазоны для случайной генерации:
+
+<b>❤️ Здоровье (1-10 HP)</b> — определяет, с каким количеством HP начинают игроки в раунде
+
+<b>🔘 Патроны (2-14)</b> — сколько патронов будет загружено в патронник при (пере)зарядке
+
+<b>🧳 Предметы (0-8)</b> — сколько предметов получит каждый игрок при раздаче
+
+<b>📊 Соотношение</b> — баланс между боевыми и холостыми патронами (от "только один боевой" до "только один холостой")
+
+<b>🎁 Выбор предметов</b> — какие предметы могут выпадать в этом раунде. Можно включить или отключить любой предмет
+
+Для каждого параметра задаётся минимум и максимум. При генерации бот случайно выбирает значение в этом диапазоне."""
+
+def get_guide_keyboard() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="📖 Правила", callback_data="guide_rules"),
+         InlineKeyboardButton(text="🎁 Предметы", callback_data="guide_items")],
+        [InlineKeyboardButton(text="⚙️ Настройки", callback_data="guide_settings")],
+        [InlineKeyboardButton(text="❌ Закрыть", callback_data="nsng")]
+    ])
+
+
 def safe_randint(min_val: int, max_val: int) -> int:
     if min_val >= max_val:
         return min_val
@@ -729,6 +800,14 @@ async def cmd_save_and_quit(message: Message):
     await bot.session.close()
     await dp.storage.close()
     sys.exit(0)
+
+@dp.message(Command("guide"))
+async def cmd_guide(message: Message):
+    await message.answer(
+        text=format_guide_rules(),
+        reply_markup=get_guide_keyboard(),
+        parse_mode='HTML'
+    )
 
 @dp.message(Command("newshot"))
 async def cmd_start_new(message: Message):
@@ -1710,6 +1789,43 @@ async def callback_settings_back(callback: CallbackQuery):
         text=format_lobby_message(game),
         reply_markup=get_lobby_keyboard(game)
     )
+    await callback.answer()
+
+
+@dp.callback_query(F.data == "guide_rules")
+async def callback_guide_rules(callback: CallbackQuery):
+    try:
+        await callback.message.edit_text(
+            text=format_guide_rules(),
+            reply_markup=get_guide_keyboard(),
+            parse_mode='HTML'
+        )
+    except:
+        pass
+    await callback.answer()
+
+@dp.callback_query(F.data == "guide_items")
+async def callback_guide_items(callback: CallbackQuery):
+    try:
+        await callback.message.edit_text(
+            text=format_guide_items(),
+            reply_markup=get_guide_keyboard(),
+            parse_mode='HTML'
+        )
+    except:
+        pass
+    await callback.answer()
+
+@dp.callback_query(F.data == "guide_settings")
+async def callback_guide_settings(callback: CallbackQuery):
+    try:
+        await callback.message.edit_text(
+            text=format_guide_settings(),
+            reply_markup=get_guide_keyboard(),
+            parse_mode='HTML'
+        )
+    except:
+        pass
     await callback.answer()
 
 
