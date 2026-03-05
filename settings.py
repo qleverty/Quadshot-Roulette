@@ -98,7 +98,7 @@ async def check_settings_access(callback: CallbackQuery, games: dict) -> tuple:
 def format_main_settings_message(is_personal: bool) -> str:
     msg = "⚙️ Настройки игры:"
     if is_personal:
-        msg += "\n\n⚠️ В этом чате нет активных игр, поэтому сейчас\nвы настраиваете ваши личные настройки\nдля будущих игр."
+        msg += "\n\n⚠️ В этом чате нет активных игр, поэтому сейчас вы настраиваете ваши личные настройки для будущих игр."
     return msg
 
 
@@ -131,7 +131,7 @@ def format_round_menu_message(settings: dict, round_idx: int, is_personal: bool)
     msg += f"🎁 Включено: {' '.join(enabled) if enabled else 'нет'}"
     
     if is_personal:
-        msg += "\n\n⚠️ В этом чате нет активных игр, поэтому сейчас\nвы настраиваете ваши личные настройки\nдля будущих игр."
+        msg += "\n\n⚠️ В этом чате нет активных игр, поэтому сейчас вы настраиваете ваши личные настройки для будущих игр."
     
     return msg
 
@@ -152,7 +152,7 @@ def get_round_menu_keyboard(round_idx: int) -> InlineKeyboardMarkup:
 def format_minmax_message(emoji: str, title: str, current_min: int, current_max: int, is_personal: bool) -> str:
     msg = f"{emoji} {title}:\n\nТекущее: {current_min}-{current_max}"
     if is_personal:
-        msg += "\n\n⚠️ В этом чате нет активных игр, поэтому сейчас\nвы настраиваете ваши личные настройки\nдля будущих игр."
+        msg += "\n\n⚠️ В этом чате нет активных игр, поэтому сейчас вы настраиваете ваши личные настройки для будущих игр."
     return msg
 
 
@@ -176,7 +176,7 @@ def get_minmax_keyboard(round_idx: int, key: str, options: list, current_min: in
 def format_ratio_message(current_ratio: int, is_personal: bool) -> str:
     msg = "📊 Соотношение патронов:\n\nВыберите баланс боевых/холостых:"
     if is_personal:
-        msg += "\n\n⚠️ В этом чате нет активных игр, поэтому сейчас\nвы настраиваете ваши личные настройки\nдля будущих игр."
+        msg += "\n\n⚠️ В этом чате нет активных игр, поэтому сейчас вы настраиваете ваши личные настройки для будущих игр."
     return msg
 
 
@@ -192,7 +192,7 @@ def get_ratio_keyboard(round_idx: int, current_ratio: int) -> InlineKeyboardMark
 def format_items_message(items_string: str, is_personal: bool) -> str:
     msg = "🎁 Предметы:\n\nНажмите, чтобы включить/выключить:"
     if is_personal:
-        msg += "\n\n⚠️ В этом чате нет активных игр, поэтому сейчас\nвы настраиваете ваши личные настройки\nдля будущих игр."
+        msg += "\n\n⚠️ В этом чате нет активных игр, поэтому сейчас вы настраиваете ваши личные настройки для будущих игр."
     return msg
 
 

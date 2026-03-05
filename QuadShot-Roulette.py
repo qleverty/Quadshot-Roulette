@@ -5,7 +5,7 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.exceptions import *
-from settings import handle_settings, get_default_settings, ITEMS_ORDER, get_player_settings
+from settings import handle_settings, get_default_settings, ITEMS_ORDER, get_player_settings, format_main_settings_message, get_main_settings_keyboard
 from bottoken import BOT_TOKEN
 import json
 import os
@@ -808,6 +808,39 @@ async def cmd_guide(message: Message):
         reply_markup=get_guide_keyboard(),
         parse_mode='HTML'
     )
+
+@dp.message(Command("settings"))
+async def cmd_settings(message: Message):
+    chat_id = message.chat.id
+    thread_id = message.message_thread_id if message.is_topic_message else None
+    game_key = f"{chat_id}|{thread_id}" if thread_id else str(chat_id)
+    user_id = message.from_user.id
+    
+    user_settings = get_player_settings(user_id)
+    
+    if game_key in games:
+        game = games[game_key]
+        
+        if game["st"] != "lobby":
+            await message.answer("⚠️ Нельзя менять настройки во время игры!")
+            return
+        
+        creator_id = list(game["p"].keys())[0]
+        if user_id != creator_id:
+            await message.answer("⚠️ Только создатель может менять настройки игры!")
+            return
+        
+        is_personal = False
+        await message.answer(
+            text=format_main_settings_message(is_personal),
+            reply_markup=get_main_settings_keyboard(is_personal)
+        )
+    else:
+        is_personal = True
+        await message.answer(
+            text=format_main_settings_message(is_personal),
+            reply_markup=get_main_settings_keyboard(is_personal)
+        )
 
 @dp.message(Command("newshot"))
 async def cmd_start_new(message: Message):
