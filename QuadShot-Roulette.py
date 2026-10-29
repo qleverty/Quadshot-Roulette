@@ -13,6 +13,7 @@ import sys
 import re
 print("starting...")
 
+
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
@@ -110,7 +111,7 @@ def format_guide_items() -> str:
 
 Предметы используются в свой ход перед выстрелом. У каждого игрока может быть до 8 предметов одновременно.
 
-🪚 <b>Пила</b> — укорачивает ствол. Следующий выстрел наносит удвоенный урон
+🪚 <b>Пила</b> — следующий выстрел наносит удвоенный урон
 
 🔍 <b>Лупа</b> — показывает, какой патрон сейчас в стволе (боевой или холостой)
 
@@ -1864,7 +1865,7 @@ async def callback_guide_settings(callback: CallbackQuery):
 
 @dp.callback_query(F.data == "l")
 async def callback_leave(callback: CallbackQuery):
-    await callback.answer("⚠️ Функция в разработке!", show_alert=True)
+    await callback.answer("Если вы это читаете, значит разраб петух и до сих пор не сделал функционал для этой кнопки. Выхода нет.", show_alert=True)
 
 
 @dp.callback_query(F.data == "empty")
